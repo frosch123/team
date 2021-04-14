@@ -37,7 +37,13 @@ def list_teams():
             response.text,
         )
 
-    return response.json()
+    teams = response.json()
+    for team in teams:
+        members = requests.get("https://api.github.com/orgs/OpenTTD/teams/{}/members".format(team["slug"]), headers=headers)
+        if response.status_code == 200:
+            team["members"] = members.json()
+
+    return teams
 
 
 def add_to_team(login, team):
@@ -59,6 +65,7 @@ def add_to_team(login, team):
 
 def create_team(name, description, parent_id):
     """Create a new team, with no members"""
+    raise Exception()
     github_token = os.getenv("GITHUB_TOKEN")
 
     payload = {
